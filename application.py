@@ -54,11 +54,11 @@ def getPH():
     # Example request
     ph = []
     for s in phc.get_todays_posts()[:5]:
-        print s.id
-        print s.name
-        print s.tagline
-        print s.votes_count
-        print s.redirect_url
+        #print s.id
+        #print s.name.encode('utf-8')
+        #print s.tagline.encode('utf-8')
+        #print s.votes_count
+        #print s.redirect_url
 
         story = {}
         story["uid"] = s.id
