@@ -1,0 +1,7 @@
+{
+  "name": "Hacker News / Product Hunt Flash Briefing",
+  "description": "Flash Briefing Feed for top 5 stories on Hacker News & Product Hunt",
+  "image": "heroku/python",
+  "repository": "https://github.com/nealrs/hn_ph_alexa",
+  "keywords": ["python", "flask", "json", "hacker news", "hn", "ph", "product hunt" "alexa", "flash briefing", "echo" ]
+}
