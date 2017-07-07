@@ -37,14 +37,14 @@ def getHN():
         r = requests.get(APIstory)
         d = r.json()
         story = {}
-        print d
+        #print d
 
         story["uid"] = s
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
         story["titleText"] = "Top stories on HN: "+ d['title'].encode('utf-8')
 
-        if 'kids' in d:
-            story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(len(d['kids'])) + d['title'].encode('utf-8')
+        if 'descendants' in d:
+            story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(d['descendants']) + d['title'].encode('utf-8')
         else:
             story["mainText"] = "With "+ str(d['score']) +" points: "+ d['title'].encode('utf-8')
 
@@ -70,7 +70,16 @@ def getPH():
         story["uid"] = s.id
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
         story["titleText"] = "Top posts on PH: "+ (s.name).encode('utf-8')
-        story["mainText"] = "With "+ str(s.votes_count) +" up votes: " + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
+
+        if s.comments_count:
+            story["mainText"] = "With "+ str(s.votes_count) +" up votes and "+ comments(s.comments_count) + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
+        else:
+            story["mainText"] = "With "+ str(s.votes_count) +" up votes: " + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
+
+
+
+
+
         story["redirectionUrl"] = s.redirect_url
         ph.append(story)
 
