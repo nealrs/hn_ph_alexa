@@ -40,8 +40,8 @@ def getHN():
 
         story["uid"] = s
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
-        story["titleText"] = "Top stories on HN: "+ d['title']
-        story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(len(d['kids'])) + d['title']
+        story["titleText"] = "Top stories on HN: "+ d['title'].encode('utf-8')
+        story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(len(d['kids'])) + d['title'].encode('utf-8')
         story["redirectionUrl"] = d['url']
 
         hn.append(story)
@@ -63,8 +63,8 @@ def getPH():
         story = {}
         story["uid"] = s.id
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
-        story["titleText"] = "Top posts on PH: "+ s.name
-        story["mainText"] = "With "+ str(s.votes_count) +" up votes: " + s.name + ", " + s.tagline
+        story["titleText"] = "Top posts on PH: "+ (s.name).encode('utf-8')
+        story["mainText"] = "With "+ str(s.votes_count) +" up votes: " + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
         story["redirectionUrl"] = s.redirect_url
         ph.append(story)
 
