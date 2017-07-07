@@ -37,11 +37,17 @@ def getHN():
         r = requests.get(APIstory)
         d = r.json()
         story = {}
+        print d
 
         story["uid"] = s
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
         story["titleText"] = "Top stories on HN: "+ d['title'].encode('utf-8')
-        story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(len(d['kids'])) + d['title'].encode('utf-8')
+
+        if 'kids' in d:
+            story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(len(d['kids'])) + d['title'].encode('utf-8')
+        else:
+            story["mainText"] = "With "+ str(d['score']) +" points: "+ d['title'].encode('utf-8')
+
         story["redirectionUrl"] = d['url']
 
         hn.append(story)
