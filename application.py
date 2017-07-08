@@ -17,7 +17,7 @@ def getTime():
 
 
 def comments(x):
-    if x > 1:
+    if x > 1 or x == 0:
         return str(x) + " comments: "
     else:
         return str(x) + " comment: "
@@ -75,10 +75,6 @@ def getPH():
             story["mainText"] = "With "+ str(s.votes_count) +" up votes and "+ comments(s.comments_count) + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
         else:
             story["mainText"] = "With "+ str(s.votes_count) +" up votes: " + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
-
-
-
-
 
         story["redirectionUrl"] = s.redirect_url
         ph.append(story)
