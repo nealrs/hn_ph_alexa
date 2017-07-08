@@ -41,7 +41,7 @@ def getHN():
 
         story["uid"] = s
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
-        story["titleText"] = "Top stories on HN: "+ d['title'].encode('utf-8')
+        story["titleText"] = "From HN: "+ d['title'].encode('utf-8')
 
         if 'descendants' in d:
             story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(d['descendants']) + d['title'].encode('utf-8')
@@ -60,16 +60,10 @@ def getPH():
     # Example request
     ph = []
     for s in phc.get_todays_posts()[:5]:
-        #print s.id
-        #print s.name.encode('utf-8')
-        #print s.tagline.encode('utf-8')
-        #print s.votes_count
-        #print s.redirect_url
-
         story = {}
         story["uid"] = s.id
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
-        story["titleText"] = "Top posts on PH: "+ (s.name).encode('utf-8')
+        story["titleText"] = "From PH: "+ (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
 
         if s.comments_count:
             story["mainText"] = "With "+ str(s.votes_count) +" up votes and "+ comments(s.comments_count) + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
@@ -98,6 +92,7 @@ def ph():
         return json.dumps(feed)
     else:
         return make_response("Feed Error", 400)
+
 
 if __name__ == "__main__":
 	app.run(debug=os.environ['DEBUG'])
