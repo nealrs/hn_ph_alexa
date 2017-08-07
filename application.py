@@ -2,9 +2,11 @@ import requests
 from datetime import datetime
 import pytz
 import os
-from flask import Flask, request, redirect, session, render_template, Response, make_response
+from flask import Flask, request, redirect, session, render_template, Response, make_response, jsonify
 import json
 from ph_py import ProductHuntClient
+import random
+import feedparser
 
 app = Flask(__name__)
 
@@ -51,7 +53,11 @@ def getHN(num=5):
         else:
             story["mainText"] = "With "+ str(d['score']) +" points: "+ d['title'].encode('utf-8')
 
-        story["redirectionUrl"] = d['url']
+        #print story["uid"]
+        if 'url' in d:
+            story["redirectionUrl"] = d['url']
+        else:
+            story["redirectionUrl"] = story["commentURL"]
 
         hn.append(story)
 
@@ -82,6 +88,22 @@ def getPH(num=5):
 
     return ph
 
+
+def getWIB():
+    url = "https://warisboring.com/feed/"
+    rss = feedparser.parse(url)
+    wib = []
+
+    for s in rss['entries']:
+        story = {}
+        story['title'] = s['title']
+        story['commentURL'] = s['link']
+        story['thumbnail'] = "http://i.imgur.com/rUk5Tar.png"
+        wib.append(story)
+
+    return wib
+
+
 ## GENERATE HN FEED
 @app.route('/hn', methods=['GET'])
 def hn():
@@ -100,14 +122,31 @@ def ph():
     else:
         return make_response("Feed Error", 400)
 
+
+## GENERATE WIB FEED
+@app.route('/wib', methods=['GET'])
+def wib():
+    feed = getWIB()
+    if feed:
+        return json.dumps(feed)
+    else:
+        return make_response("Feed Error", 400)
+
+
+
 ## GENERATE combined/big FEED
 @app.route('/all', methods=['GET'])
 def all():
-    feed = []
-    feed.extend(getPH(20))
-    feed.extend(getHN(20))
+    feed = {}
+    feed["stories"] = []
+    feed["stories"].extend(getPH(20))
+    feed["stories"].extend(getHN(20))
+    feed["stories"].extend(getWIB())
+
+    random.shuffle(feed["stories"])
+
     if feed:
-        return json.dumps(feed)
+        return jsonify(feed), 200
     else:
         return make_response("Feed Error", 400)
 
