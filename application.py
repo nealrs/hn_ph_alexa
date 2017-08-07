@@ -17,13 +17,13 @@ def getTime():
 
 
 def comments(x):
-    if x > 1 or x == 0:
-        return str(x) + " comments: "
-    else:
+    if x == 1:
         return str(x) + " comment: "
+    else:
+        return str(x) + " comments: "
 
 
-def getHN():
+def getHN(num=5):
     APIbase = "https://hacker-news.firebaseio.com/v0/"
     APItop = APIbase+"topstories.json"
     topReq = requests.get(APItop)
@@ -31,7 +31,7 @@ def getHN():
     #print topStories
     hn = []
 
-    for s in topStories[:5]:
+    for s in topStories[:int(num)]:
         #print s
         APIstory = APIbase +"item/"+ str(s) +".json"
         r = requests.get(APIstory)
@@ -42,6 +42,9 @@ def getHN():
         story["uid"] = s
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
         story["titleText"] = "From HN: "+ d['title'].encode('utf-8')
+        story["commentURL"] = "https://news.ycombinator.com/item?id="+ str(s)
+        story["title"] = d['title'].encode('utf-8')
+        story["thumbnail"]="http://i.imgur.com/iNheuJ7.png"
 
         if 'descendants' in d:
             story["mainText"] = "With "+ str(d['score']) +" points and "+ comments(d['descendants']) + d['title'].encode('utf-8')
@@ -55,15 +58,19 @@ def getHN():
     return hn
 
 
-def getPH():
+def getPH(num=5):
     phc = ProductHuntClient(os.environ['PHC'], os.environ['PHS'], "http://localhost:5000")
     # Example request
     ph = []
-    for s in phc.get_todays_posts()[:5]:
+    for s in phc.get_todays_posts()[:int(num)]:
         story = {}
         story["uid"] = s.id
         story["updateDate"] = getTime().strftime('%Y-%m-%dT%H:%M:%S.0Z')
         story["titleText"] = "From PH: "+ (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
+
+        story["title"] = (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
+        story["commentURL"] =s.discussion_url.encode('utf-8')
+        story["thumbnail"]="http://i.imgur.com/BOUdyc2.jpg"
 
         if s.comments_count:
             story["mainText"] = "With "+ str(s.votes_count) +" up votes and "+ comments(s.comments_count) + (s.name).encode('utf-8') + ", " + (s.tagline).encode('utf-8')
@@ -75,7 +82,7 @@ def getPH():
 
     return ph
 
-## GENERATE FEEDS
+## GENERATE HN FEED
 @app.route('/hn', methods=['GET'])
 def hn():
     feed = getHN()
@@ -84,10 +91,21 @@ def hn():
     else:
         return make_response("Feed Error", 400)
 
-## GENERATE FEEDS
+## GENERATE PH FEED
 @app.route('/ph', methods=['GET'])
 def ph():
     feed = getPH()
+    if feed:
+        return json.dumps(feed)
+    else:
+        return make_response("Feed Error", 400)
+
+## GENERATE combined/big FEED
+@app.route('/all', methods=['GET'])
+def all():
+    feed = []
+    feed.extend(getPH(20))
+    feed.extend(getHN(20))
     if feed:
         return json.dumps(feed)
     else:
