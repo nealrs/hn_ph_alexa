@@ -3,3 +3,4 @@ requests==2.7.0
 Flask==0.12.2
 gunicorn==0.14.2
 ph_py==0.1
+feedparser==5.2.1
