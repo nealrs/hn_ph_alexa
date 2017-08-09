@@ -7,6 +7,8 @@ import json
 from ph_py import ProductHuntClient
 import random
 import feedparser
+from lxml import html
+import requests
 
 app = Flask(__name__)
 
@@ -104,6 +106,24 @@ def getWIB():
     return wib
 
 
+def getND():
+    page = requests.get('http://nextdraft.com/current')
+    tree = html.fromstring(page.content)
+    nd = []
+
+    links = tree.xpath('//div[@class="blurb-content"]/p/a/@href')
+    sentences = tree.xpath('//div[@class="blurb-content"]/p/a/text()')
+
+    for l, s in zip(links, sentences):
+        story = {}
+        story['title'] = s
+        story['commentURL'] = l
+        story['thumbnail'] = "http://i.imgur.com/Pbcu4DI.png"
+        nd.append(story)
+
+    return nd
+
+
 ## GENERATE HN FEED
 @app.route('/hn', methods=['GET'])
 def hn():
@@ -133,6 +153,16 @@ def wib():
         return make_response("Feed Error", 400)
 
 
+## GENERATE WIB FEED
+@app.route('/nd', methods=['GET'])
+def nd():
+    feed = getND()
+    if feed:
+        return json.dumps(feed)
+    else:
+        return make_response("Feed Error", 400)
+
+
 
 ## GENERATE combined/big FEED
 @app.route('/all', methods=['GET'])
@@ -142,8 +172,9 @@ def all():
     feed["stories"].extend(getPH(20))
     feed["stories"].extend(getHN(20))
     feed["stories"].extend(getWIB())
+    feed["stories"].extend(getND())
 
-    random.shuffle(feed["stories"])
+    #random.shuffle(feed["stories"])
 
     if feed:
         return jsonify(feed), 200
