@@ -131,7 +131,7 @@ def getALL():
     feed["stories"].extend(getWIB())
     feed["stories"].extend(getND())
 
-    f = open("feed.json", 'w')
+    f = open("../feed.json", 'w')
     f.write(str(json.dumps(feed)))
     f.close()
 
