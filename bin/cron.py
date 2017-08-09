@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import requests
 from datetime import datetime
 import pytz
@@ -9,8 +10,6 @@ import random
 import feedparser
 from lxml import html
 import requests
-
-app = Flask(__name__)
 
 # establish current date in PT timezone
 def getTime():
@@ -124,66 +123,7 @@ def getND():
     return nd
 
 
-## GENERATE HN FEED
-@app.route('/hn', methods=['GET'])
-def hn():
-    feed = getHN()
-    if feed:
-        return json.dumps(feed)
-    else:
-        return make_response("Feed Error", 400)
-
-## GENERATE PH FEED
-@app.route('/ph', methods=['GET'])
-def ph():
-    feed = getPH()
-    if feed:
-        return json.dumps(feed)
-    else:
-        return make_response("Feed Error", 400)
-
-
-## GENERATE WIB FEED
-@app.route('/wib', methods=['GET'])
-def wib():
-    feed = getWIB()
-    if feed:
-        return json.dumps(feed)
-    else:
-        return make_response("Feed Error", 400)
-
-
-## GENERATE ND FEED
-@app.route('/nd', methods=['GET'])
-def nd():
-    feed = getND()
-    if feed:
-        return json.dumps(feed)
-    else:
-        return make_response("Feed Error", 400)
-
-
-## GENERATE combined/big FEED
-@app.route('/all', methods=['GET'])
-def all():
-    feed = {}
-    feed["stories"] = []
-    feed["stories"].extend(getPH(20))
-    feed["stories"].extend(getHN(20))
-    feed["stories"].extend(getWIB())
-    feed["stories"].extend(getND())
-
-    #random.shuffle(feed["stories"])
-
-    if feed:
-        return jsonify(feed), 200
-    else:
-        return make_response("Feed Error", 400)
-
-
-"""## GENERATE combined/big FEED
-@app.route('/genfeed', methods=['GET'])
-def genfeed():
+def getALL():
     feed = {}
     feed["stories"] = []
     feed["stories"].extend(getPH(20))
@@ -195,21 +135,5 @@ def genfeed():
     f.write(str(json.dumps(feed)))
     f.close()
 
-    if feed:
-        return jsonify(feed), 200
-    else:
-        return make_response("Feed Error", 400)"""
-
-@app.route('/appfeed', methods=['GET'])
-def appfeed():
-    f = open("feed.json", 'r+')
-    feed = f.read()
-    f.close()
-
-    if feed:
-        return feed, 200
-    else:
-        return make_response("App Feed Error", 400)
-
-if __name__ == "__main__":
-	app.run(debug=os.environ['DEBUG'])
+# generate feed
+getALL()
