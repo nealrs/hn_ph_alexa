@@ -9,6 +9,7 @@ import random
 import feedparser
 from lxml import html
 import requests
+import redis
 
 app = Flask(__name__)
 
@@ -164,6 +165,7 @@ def nd():
 
 
 ## GENERATE combined/big FEED
+"""
 @app.route('/all', methods=['GET'])
 def all():
     feed = {}
@@ -179,35 +181,19 @@ def all():
         return jsonify(feed), 200
     else:
         return make_response("Feed Error", 400)
+"""
 
 
-"""## GENERATE combined/big FEED
-@app.route('/genfeed', methods=['GET'])
-def genfeed():
-    feed = {}
-    feed["stories"] = []
-    feed["stories"].extend(getPH(20))
-    feed["stories"].extend(getHN(20))
-    feed["stories"].extend(getWIB())
-    feed["stories"].extend(getND())
+@app.route('/all', methods=['GET'])
+def all():
+    redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
 
-    f = open("feed.json", 'w')
-    f.write(str(json.dumps(feed)))
-    f.close()
-
-    if feed:
-        return jsonify(feed), 200
-    else:
-        return make_response("Feed Error", 400)"""
-
-@app.route('/appfeed', methods=['GET'])
-def appfeed():
-    f = open("feed.json", 'r+')
-    feed = f.read()
-    f.close()
+    feed = redisdb.get("feed")
+    #feed = json.dumps(redisdb.get("feed"))
 
     if feed:
         return feed, 200
+        #return jsonify(feed), 200
     else:
         return make_response("App Feed Error", 400)
 

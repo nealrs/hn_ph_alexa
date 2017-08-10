@@ -10,6 +10,7 @@ import random
 import feedparser
 from lxml import html
 import requests
+import redis
 
 # establish current date in PT timezone
 def getTime():
@@ -131,9 +132,22 @@ def getALL():
     feed["stories"].extend(getWIB())
     feed["stories"].extend(getND())
 
-    f = open("../feed.json", 'w')
-    f.write(str(json.dumps(feed)))
-    f.close()
+    #f = open("../feed.json", 'w')
+    #f.write(str(json.dumps(feed)))
+    #f.close()
+
+    # CONNECT TO REDIS & MYSQL + define ORM
+    redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
+    print redisdb.set("feed", str(json.dumps(feed)))
 
 # generate feed
 getALL()
+
+#print "\n***\n"
+#redisdb = #redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
+
+#print "\n***\n"
+#print redisdb.get("feed")
+
+#print "\n***\n"
+#print json.dumps(redisdb.get("feed"))
