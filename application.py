@@ -164,26 +164,7 @@ def nd():
         return make_response("Feed Error", 400)
 
 
-## GENERATE combined/big FEED
-"""
-@app.route('/all', methods=['GET'])
-def all():
-    feed = {}
-    feed["stories"] = []
-    feed["stories"].extend(getPH(20))
-    feed["stories"].extend(getHN(20))
-    feed["stories"].extend(getWIB())
-    feed["stories"].extend(getND())
-
-    #random.shuffle(feed["stories"])
-
-    if feed:
-        return jsonify(feed), 200
-    else:
-        return make_response("Feed Error", 400)
-"""
-
-
+## GET combined/big FEED
 @app.route('/all', methods=['GET'])
 def all():
     redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis

@@ -132,23 +132,11 @@ def getALL():
     feed["stories"].extend(getWIB())
     feed["stories"].extend(getND())
 
-    #f = open("../feed.json", 'w')
-    #f.write(str(json.dumps(feed)))
-    #f.close()
+    random.shuffle(feed["stories"])
 
-    # CONNECT TO REDIS & MYSQL + define ORM
-    redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
+    # CONNECT TO REDIS
+    redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL'])
     print redisdb.set("feed", str(json.dumps(feed)))
-    #print redisdb.set("feed", str(feed))
 
 # generate feed
 getALL()
-
-#print "\n***\n"
-#redisdb = #redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
-
-#print "\n***\n"
-#print redisdb.get("feed")
-
-#print "\n***\n"
-#print json.dumps(redisdb.get("feed"))
