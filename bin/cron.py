@@ -138,7 +138,7 @@ def getALL():
 
     # CONNECT TO REDIS & MYSQL + define ORM
     redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
-    print redisdb.set("feed", str(json.dumps(feed)))
+    print redisdb.set("feed", str(feed))
 
 # generate feed
 getALL()
