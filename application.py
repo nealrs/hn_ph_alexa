@@ -192,8 +192,8 @@ def all():
     #feed = json.dumps(redisdb.get("feed"))
 
     if feed:
-        #return feed, 200
-        return jsonify(feed), 200
+        return feed, 200
+        #return jsonify(feed), 200
     else:
         return make_response("App Feed Error", 400)
 
