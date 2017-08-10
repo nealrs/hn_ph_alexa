@@ -189,10 +189,14 @@ def all():
     redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL']) # Heroku Redis
 
     feed = redisdb.get("feed")
-    #feed = json.dumps(redisdb.get("feed"))
+    #feed = json.dumps(str(redisdb.get("feed")))
+    print feed
 
     if feed:
-        return feed, 200
+        r = make_response( feed )
+        r.mimetype = 'application/json'
+        return r
+        #return str(feed), 200
         #return jsonify(feed), 200
     else:
         return make_response("App Feed Error", 400)
