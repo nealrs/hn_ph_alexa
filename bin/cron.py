@@ -132,7 +132,7 @@ def getALL():
     feed["stories"].extend(getWIB())
     feed["stories"].extend(getND())
 
-    random.shuffle(feed["stories"])
+    #random.shuffle(feed["stories"])
 
     # CONNECT TO REDIS
     redisdb = redis.StrictRedis.from_url(os.environ['REDIS_URL'])
