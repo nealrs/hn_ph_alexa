@@ -11,6 +11,7 @@ import feedparser
 from lxml import html
 import requests
 import redis
+from urlparse import urlparse
 
 # establish current date in PT timezone
 def getTime():
@@ -116,7 +117,7 @@ def getND():
 
     for l, s in zip(links, sentences):
         story = {}
-        story['title'] = s
+        story['title'] = s + ' ({uri.netloc})'.format(uri=urlparse(l)).replace('www.', '')
         story['commentURL'] = l
         story['thumbnail'] = "http://i.imgur.com/Pbcu4DI.png"
         nd.append(story)
@@ -127,9 +128,9 @@ def getND():
 def getALL():
     feed = {}
     feed["stories"] = []
-    feed["stories"].extend(getPH(20))
     feed["stories"].extend(getHN(20))
     feed["stories"].extend(getWIB())
+    feed["stories"].extend(getPH(20))
     feed["stories"].extend(getND())
 
     #random.shuffle(feed["stories"])
