@@ -125,13 +125,28 @@ def getND():
     return nd
 
 
+def getLR():
+    url = "https://longreads.com/feed/"
+    rss = feedparser.parse(url)
+    lr = []
+
+    for s in rss['entries']:
+        story = {}
+        story['title'] = s['title']
+        story['commentURL'] = s['link']
+        story['thumbnail'] = "http://i.imgur.com/B50b6Vq.png"
+        lr.append(story)
+
+    return lr
+
 def getALL():
     feed = {}
     feed["stories"] = []
     feed["stories"].extend(getHN(20))
     feed["stories"].extend(getWIB())
-    feed["stories"].extend(getPH(20))
+    feed["stories"].extend(getLR())
     feed["stories"].extend(getND())
+    feed["stories"].extend(getPH(20))
 
     #random.shuffle(feed["stories"])
 
